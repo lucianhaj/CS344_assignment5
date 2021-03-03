@@ -22,6 +22,8 @@ void error(const char *msg) {
   exit(0); 
 } 
 
+
+
 // Set up the address struct
 void setupAddressStruct(struct sockaddr_in* address, 
                         int portNumber, 
@@ -49,7 +51,7 @@ void setupAddressStruct(struct sockaddr_in* address,
 
 int main(int argc, char *argv[]) {
 	
-  int socketFD, portNumber, charsWritten, charsRead, num;
+  int socketFD, portNumber, charsWritten, charsRead, num, Received_all;
   struct sockaddr_in serverAddress;
   char buffer[1000];
   char buffer2[1000];
@@ -94,9 +96,7 @@ int main(int argc, char *argv[]) {
   // Get input message from user
   //printf("CLIENT: Enter text to send to the server, and then hit enter: ");
   // Clear out the buffer array
- 
-
-  memset(buffer, '\0', sizeof(buffer));
+	memset(buffer, '\0', sizeof(buffer));
   // Get input from the user, trunc to buffer - 1 chars, leaving \0
 	//printf("what is the sizeof the buffer %d", strlen(buffer));
 	fgets(buffer, sizeof(buffer)-1, stdin);
@@ -106,6 +106,10 @@ int main(int argc, char *argv[]) {
  
  
  
+ 
+ /********************************
+		Send message
+ ********************************/
   charsWritten = send(socketFD, message, strlen(message), 0); 
   if (charsWritten < 0){
     error("CLIENT: ERROR writing to socket");
@@ -113,7 +117,12 @@ int main(int argc, char *argv[]) {
   if(charsWritten < strlen(buffer)){
     printf("CLIENT: WARNING: Not all data written to socket!\n");
   }
-	
+  while(charsWritten < strlen(message)){
+	  
+  charsWritten = send(socketFD, message, strlen(message), 0); 
+  
+	  
+  }
 	
 	
 	close(plain);
@@ -135,7 +144,7 @@ int main(int argc, char *argv[]) {
   if (charsRead < 0){
     error("CLIENT: ERROR reading from socket");
   }
-  printf("CLIENT: I received this from the server: \"%s\"\n", buffer);
+  //printf("CLIENT: I received this from the server: \"%s\"\n", buffer);
 
 
 
@@ -161,11 +170,11 @@ int main(int argc, char *argv[]) {
 
   // Send message to server
   // Write to the server
-  charsWritten = send(socketFD, buffer2, strlen(buffer2), 0); 
+  charsWritten = send(socketFD, buffer2, strlen(buffer2)-2, 0); 
   if (charsWritten < 0){
     error("CLIENT: ERROR writing to socket");
   }
-  if(charsWritten < strlen(buffer2)){
+  if(charsWritten < strlen(buffer2)-2){
     printf("CLIENT: WARNING: Not all data written to socket!\n");
   }
 	
@@ -181,14 +190,44 @@ int main(int argc, char *argv[]) {
 	close(key);
 	
 	
+	/*************************
+	Receive the ciphertext 
+	
+	*************************/
+	Received_all = 0;
 	memset(buffer, '\0', sizeof(buffer));
   // Read data from the socket, leaving \0 at end
   charsRead = recv(socketFD, buffer, sizeof(buffer) - 1, 0); 
+  
+   for(int i = 0; i < strlen(buffer); i++){
+						 if(buffer[i] == '@'){
+						 Received_all = 1;
+						 }
+				}
+				 while(Received_all == 0){
+					 
+				memset(buffer, '\0', 1000);
+				charsRead = recv(socketFD, buffer, sizeof(buffer) - 1, 0); 
+
+				 for(int i = 0; i < strlen(buffer); i++){
+						 if(buffer[i] == '@'){
+						 Received_all = 1;
+						 }
+				}				
+				}
+				
+ 
+  
+  
+  
+ // buffer[strlen(buffer)] = '\n';
+  
+  
   if (charsRead < 0){
     error("CLIENT: ERROR reading from socket");
   }
-  printf("CLIENT: The CIPHERTEXT from server:\"%s\"\n", buffer);
-	
+ // printf("CLIENT: The CIPHERTEXT from server:\"%s\"", buffer);
+	printf("%s\n", buffer);
 	
 	
 	
@@ -203,7 +242,7 @@ int main(int argc, char *argv[]) {
   if (charsRead < 0){
     error("CLIENT: ERROR reading from socket");
   }
-  printf("CLIENT: I received this from the server: \"%s\"\n", buffer2);
+ // printf("CLIENT: I received this from the server: \"%s\"\n", buffer2);
 
 
 

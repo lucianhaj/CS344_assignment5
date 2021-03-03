@@ -184,7 +184,7 @@ int main(int argc, char *argv[]){
 
 				
 				 ciphertext[0] = '@';
-				 for(int i = 1; i < message_length; i++){
+				 for(int i = 1; i < message_length+1; i++){
 
 				 int int_msg_char, int_key_char, int_cipher_char;
 				 int_msg_char = 0;
@@ -208,6 +208,8 @@ int main(int argc, char *argv[]){
 
 					
 				}
+			//	printf("msg char is: %d", int_msg_char);
+			//	printf("key char is %d", int_key_char);
 				int_cipher_char = int_msg_char + int_key_char;
 				if(int_cipher_char > 26){
 					int_cipher_char -= 27;
@@ -238,7 +240,12 @@ int main(int argc, char *argv[]){
 				if (charsRead < 0){
 				  error("ERROR writing to socket");
 				}
-			
+				while(charsRead < message_length){
+					
+				charsRead = send(connectionSocket, ciphertext, strlen(ciphertext)+1, 0);
+	
+					
+				}
 			
 			
 		 
@@ -267,10 +274,9 @@ int main(int argc, char *argv[]){
 				
 				close(connectionSocket); 
 				
-				
+			  return 0;
 				
 
-			  break;
 		default:
 			 
 		actual_pid = waitpid(spawnPid, &childStatus, WNOHANG);

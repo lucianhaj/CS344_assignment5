@@ -49,7 +49,7 @@ for(i = 1; i < length+1; i++){
 	random_int = rand() % 28;
 	key_string[i] = alphabet_string[random_int]; 
 }
-key_string[i] = "\n";
+key_string[i] = '\n';
 
 
 for(i = 0; i < length+3; i++){
