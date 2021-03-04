@@ -117,18 +117,21 @@ int main(int argc, char *argv[]){
 						 if(buffer[i] == '@'){
 						 Read_all = 1;
 						 }
+				 }
 						 
-				 for(int i = 0; i < strlen(buffer2); i++){
-						 if(buffer2[i] == '@'){
-						 Read_all = 1;
-						 }
-				}
-				}
+	
+
 				printf("%d", Read_all);
 				 while(Read_all == 0){
 					 
 				memset(buffer, '\0', 1000);
 				charsRead = recv(connectionSocket, buffer, 999, 0); 
+				
+				for(int i = 0; i < strlen(buffer); i++){
+						 if(buffer[i] == '@'){
+						 Read_all = 1;
+						 }
+				 }
 				}
 				
 				 
@@ -173,7 +176,12 @@ int main(int argc, char *argv[]){
 						 }
 				}				
 				}
-				
+				key_length = strlen(buffer2) - 1;
+				if(key_length < message_length){
+				error("Your message is longer than your key!");
+				exit(1);	
+					
+				}
 				
 				
 				/********************************************
@@ -228,7 +236,6 @@ int main(int argc, char *argv[]){
 				if (charsRead < 0){
 				  error("ERROR reading from socket");
 				}
-				key_length = strlen(buffer2) - 1;
 				printf("key_length %d \n", key_length);
 				printf("message_length %d \n", message_length); 
 
@@ -258,11 +265,7 @@ int main(int argc, char *argv[]){
 				if (charsRead < 0){
 				  error("ERROR writing to socket");
 				}
-				if(key_length < message_length){
-				error("Your message is longer than your key!");
-				exit(2);	
-					
-				}
+				
 				
 				
 				

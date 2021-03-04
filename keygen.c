@@ -46,7 +46,8 @@ char * character = NULL;
 char c;
 key_string[0] = '@';
 for(i = 1; i < length+1; i++){
-	random_int = rand() % 28;
+	random_int = rand() % 27;
+	//printf("random int: %d \n", random_int);
 	key_string[i] = alphabet_string[random_int]; 
 }
 key_string[i] = '\n';

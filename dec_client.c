@@ -165,7 +165,7 @@ int main(int argc, char *argv[]) {
 	//printf("what is the sizeof the buffer %d", strlen(buffer2));
 	
 	fgets(buffer2, sizeof(buffer2) - 1, key);
-	printf("what is the buffer %s", buffer2);
+	printf("what is the buffer %d", strlen(buffer2));
 
   // Send message to server
   // Write to the server

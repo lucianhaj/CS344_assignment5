@@ -65,14 +65,14 @@ int main(int argc, char *argv[]) {
   
   message[0] = '@';
  
-   int plain = open(argv[1],  O_RDONLY);
-   int key = open(argv[2],  O_RDONLY); 
+   FILE * plain = fopen(argv[1],  "r");
+   FILE * key = fopen(argv[2],  "r"); 
  
  
  
  char buff[2000];
  
-	dup2(plain, 0);
+	//dup2(plain, 0);
   
   // Check usage & args
   if (argc < 3) { 
@@ -99,7 +99,7 @@ int main(int argc, char *argv[]) {
 	memset(buffer, '\0', sizeof(buffer));
   // Get input from the user, trunc to buffer - 1 chars, leaving \0
 	//printf("what is the sizeof the buffer %d", strlen(buffer));
-	fgets(buffer, sizeof(buffer)-1, stdin);
+	fgets(buffer, sizeof(buffer)-1, plain);
 	strcat(message, buffer);
 	message[strlen(message)-1] = 0;
  
@@ -115,7 +115,7 @@ int main(int argc, char *argv[]) {
     error("CLIENT: ERROR writing to socket");
   }
   if(charsWritten < strlen(buffer)){
-    printf("CLIENT: WARNING: Not all data written to socket!\n");
+    printf("CLIENT: WARNING: Not all of the message written to socket!\n");
   }
   while(charsWritten < strlen(message)){
 	  
@@ -125,7 +125,7 @@ int main(int argc, char *argv[]) {
   }
 	
 	
-	close(plain);
+	fclose(plain);
 	
 	
 	
@@ -157,37 +157,35 @@ int main(int argc, char *argv[]) {
    ****************************************************************/
 
 
-
-	dup2(key, 0);
-
 	
   memset(buffer2, '\0', sizeof(buffer2));
   // Get input from the user, trunc to buffer - 1 chars, leaving \0
 	//printf("what is the sizeof the buffer %d", strlen(buffer2));
-
-	fgets(buffer2, sizeof(buffer2)-1, stdin);
-
-
+	//getline(buffer2, 256, key);
+	fgets(buffer2, 1000, key);
+	if(strlen(buffer2) < strlen(buffer)){
+		error("keyfile is less than message!\n");
+		exit(1);
+		
+	}
   // Send message to server
   // Write to the server
-  charsWritten = send(socketFD, buffer2, strlen(buffer2)-2, 0); 
+  charsWritten = send(socketFD, buffer2, 1000, 0); 
   if (charsWritten < 0){
     error("CLIENT: ERROR writing to socket");
   }
-  if(charsWritten < strlen(buffer2)-2){
+  if(charsWritten < 256){
     printf("CLIENT: WARNING: Not all data written to socket!\n");
+  }
+	
+  while(charsWritten < strlen(buffer2)-1, 0){
+	//charsWritten = send(socketFD, buffer2, strlen(buffer2)-2, 0); 
   }
 	
 	
 	
 	
-	
-	
-	
-	
-	
-	
-	close(key);
+	fclose(key);
 	
 	
 	/*************************
