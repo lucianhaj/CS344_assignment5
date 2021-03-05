@@ -53,14 +53,14 @@ int main(int argc, char *argv[]) {
 	
   int socketFD, portNumber, charsWritten, charsRead, num, Received_all;
   struct sockaddr_in serverAddress;
-  char buffer[1000];
-  char buffer2[1000];
+  char buffer[65000];
+  char buffer2[65000];
   num = 0;
 
 	// code to parse input
   size_t size = 1000;
-  char * key_string = malloc(1000* sizeof(char));
-  char * message = malloc(1000* sizeof(char));
+  char * key_string = malloc(65000* sizeof(char));
+  char * message = malloc(65000* sizeof(char));
   int x = 0;
   
   message[0] = '@';
@@ -162,7 +162,8 @@ int main(int argc, char *argv[]) {
   // Get input from the user, trunc to buffer - 1 chars, leaving \0
 	//printf("what is the sizeof the buffer %d", strlen(buffer2));
 	//getline(buffer2, 256, key);
-	fgets(buffer2, 1000, key);
+	fgets(buffer2, 65000, key);
+	printf("what is strlen of buffer2 %d", strlen(buffer2));
 	if(strlen(buffer2) < strlen(buffer)){
 		error("keyfile is less than message!\n");
 		exit(1);
@@ -170,16 +171,17 @@ int main(int argc, char *argv[]) {
 	}
   // Send message to server
   // Write to the server
-  charsWritten = send(socketFD, buffer2, 1000, 0); 
+  charsWritten = send(socketFD, buffer2, strlen(buffer2)+1, 0); 
   if (charsWritten < 0){
     error("CLIENT: ERROR writing to socket");
   }
-  if(charsWritten < 256){
+  if(charsWritten < strlen(buffer2)-1){
     printf("CLIENT: WARNING: Not all data written to socket!\n");
   }
-	
-  while(charsWritten < strlen(buffer2)-1, 0){
-	//charsWritten = send(socketFD, buffer2, strlen(buffer2)-2, 0); 
+	printf("How many characters were sent %d", charsWritten);
+	while(charsWritten < strlen(buffer2)+2, 0){
+	charsWritten = send(socketFD, buffer2, strlen(buffer2)+1, 0); 
+	//printf("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n");
   }
 	
 	
@@ -194,8 +196,8 @@ int main(int argc, char *argv[]) {
 	*************************/
 	Received_all = 0;
 	memset(buffer, '\0', sizeof(buffer));
-  // Read data from the socket, leaving \0 at end
-  charsRead = recv(socketFD, buffer, sizeof(buffer) - 1, 0); 
+   // Read data from the socket, leaving \0 at end
+   charsRead = recv(socketFD, buffer, sizeof(buffer) - 1, 0); 
   
    for(int i = 0; i < strlen(buffer); i++){
 						 if(buffer[i] == '@'){
