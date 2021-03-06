@@ -45,8 +45,9 @@ int main(int argc, char *argv[]){
 	
 	
   int connectionSocket, charsRead, Read_all, message_length, key_length, actual_pid;
-  char buffer[1000];
-  char buffer2[1000];
+  key_length = -1;
+  char buffer[65000];
+  char buffer2[65000];
   char * length = NULL;
   struct sockaddr_in serverAddress, clientAddress;
   socklen_t sizeOfClientInfo = sizeof(clientAddress);
@@ -109,30 +110,16 @@ int main(int argc, char *argv[]){
 	Receive the message in the first transmission and respond with sucess 
 	***************************************************************/		
 				
-				memset(buffer, '\0', 1000);
-				charsRead = recv(connectionSocket, buffer, 999, 0); 
+				memset(buffer, '\0', 65000);
+				charsRead = recv(connectionSocket, buffer, 129999, 0);  /*<______RECEIVING____!!!!!!!!!!_*/
+				
+				
+				
+				
+				
+				
 				
 				 //Check that we received all the data
-				 for(int i = 0; i < strlen(buffer); i++){
-						 if(buffer[i] == '@'){
-						 Read_all = 1;
-						 }
-				 }
-						 
-	
-
-				printf("%d", Read_all);
-				 while(Read_all == 0){
-					 
-				memset(buffer, '\0', 1000);
-				charsRead = recv(connectionSocket, buffer, 999, 0); 
-				
-				for(int i = 0; i < strlen(buffer); i++){
-						 if(buffer[i] == '@'){
-						 Read_all = 1;
-						 }
-				 }
-				}
 				
 				 
 				if (charsRead < 0){
@@ -144,44 +131,94 @@ int main(int argc, char *argv[]){
 				printf("SERVER: The PLAINTEXT from client \"%s\"\n", buffer);
 
 				//Send a success message back to the client
-				charsRead = send(connectionSocket, 
+			/* 	charsRead = send(connectionSocket, 
 								"I am the server, and I got your message", 39, 0); 
 				if (charsRead < 0){
 				  error("ERROR writing to socket");
 				} 
 				
-				
+				Read_all = 0; */
 	/*************************************************************		
 	Receive the key in the second transmisson and respond with success
 	*************************************************************/
+				memset(buffer2, '\0', 65000);
+				charsRead = recv(connectionSocket, buffer2, 64999, 0);  /*<______RECEIVING__________!!!!!!!!!!_*/
+				key_length = strlen(buffer2) - 1;
 				
-				memset(buffer2, '\0', 1000);
-				charsRead = recv(connectionSocket, buffer2, 999, 0); 
 				
-				//Check that we received all the data
-
-				 for(int i = 0; i < strlen(buffer2); i++){
-						 if(buffer2[i] == '@'){
+				
+					 for(int i = 0; i < strlen(buffer)+1; i++){
+						 if(buffer[i] == '@'){
 						 Read_all = 1;
+						 break;
 						 }
-				}
+				 }
+						 
+	
+
+				printf("%d", Read_all);
 				 while(Read_all == 0){
 					 
-				memset(buffer2, '\0', 1000);
-				charsRead = recv(connectionSocket, buffer2, 999, 0);
+				memset(buffer, '\0', 65000);
+				charsRead = recv(connectionSocket, buffer, 64999, 0); 
+				
+				for(int i = 0; i < strlen(buffer)+1; i++){
+						 if(buffer[i] == '@'){
+						 Read_all = 1;
+						 break;
+						 }
+				 }
+				} 
+			/* 	
+				memset(buffer2, '\0', 65000);
+				charsRead = recv(connectionSocket, buffer2, 64999, 0);
+				key_length = strlen(buffer2) - 1; */
+				
+				/* if(key_length == -1){
+				memset(buffer2, '\0', 65000);
+				charsRead = recv(connectionSocket, buffer2, 64999, 0);
+				key_length = strlen(buffer2) - 1;
+					
+				} */
+
+			/* 	 while(key_length < strlen(buffer)){
+				memset(buffer2, '\0', 65000);
+				charsRead = recv(connectionSocket, buffer2, 64999, 0);  
+				key_length = strlen(buffer2) - 1;
+				} 
+
+				 */
+				//while(charsRead < message_length
+				//Check that we received all the data
+				
+			/* 	printf("what is the key %s", buffer2);
+				 for(int i = 0; i < strlen(buffer2); i++){
+						 if(buffer2[i] == '@'){
+						 Read_all = 1;
+						 break;
+						 }
+				}
+				printf("what was read_all %d *****************\n", Read_all);
+				while(Read_all == 0){
+					 
+				memset(buffer2, '\0', 65000);
+				charsRead = recv(connectionSocket, buffer2, 64999, 0);
 
 				 for(int i = 0; i < strlen(buffer2); i++){
 						 if(buffer2[i] == '@'){
 						 Read_all = 1;
+						 break;
 						 }
 				}				
 				}
+				printf("what was read_all %d *****************\n", Read_all);
+
 				key_length = strlen(buffer2) - 1;
 				if(key_length < message_length){
 				error("Your message is longer than your key!");
 				exit(1);	
 					
-				}
+				} */
 				
 				
 				/********************************************
@@ -206,6 +243,7 @@ int main(int argc, char *argv[]){
 				else{
 					int_msg_char = (int)buffer[i] - 65;
 					
+					
 				}
 				if(buffer2[i] == ' '){
 					int_key_char = 26;
@@ -229,8 +267,8 @@ int main(int argc, char *argv[]){
 				else{
 				ciphertext[i] = (char)(int_cipher_char+65);
 				}
-				  
 				} 
+				
 				
 				 
 				if (charsRead < 0){
@@ -242,25 +280,25 @@ int main(int argc, char *argv[]){
 			
 			
 				
-				charsRead = send(connectionSocket, ciphertext, strlen(ciphertext)+1, 0);
+				charsRead = send(connectionSocket, ciphertext, strlen(ciphertext)+1, 0);/*<______SENDING___________!!!!!!!!!!_*/
 			
 				if (charsRead < 0){
 				  error("ERROR writing to socket");
 				}
-				while(charsRead < message_length){
+				/* while(charsRead < message_length){
 					
 				charsRead = send(connectionSocket, ciphertext, strlen(ciphertext)+1, 0);
 	
 					
-				}
+				} */
 			
 			
 		 
-				printf("SERVER: The KEY from client:       \"%s\"\n", buffer2);
+				//printf("SERVER: The KEY from client:       \"%s\"\n", buffer2);
 				
 			
 				// Send a success message back to the client
-				charsRead = send(connectionSocket, 
+				charsRead = send(connectionSocket, /*<______SENDING___________!!!!!!!!!!_*/
 								"I am the server, and I got your message", 39, 0); 
 				if (charsRead < 0){
 				  error("ERROR writing to socket");

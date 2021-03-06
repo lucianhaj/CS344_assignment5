@@ -44,16 +44,15 @@ char alphabet_string[28] = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K
 char * key_string = malloc((length + 2) * sizeof(char));
 char * character = NULL;
 char c;
-key_string[0] = '@';
-for(i = 1; i < length+1; i++){
+for(i = 0; i < length; i++){
 	random_int = rand() % 27;
 	//printf("random int: %d \n", random_int);
 	key_string[i] = alphabet_string[random_int]; 
 }
-key_string[i] = '\n';
+key_string[i] = '%';
 
 
-for(i = 0; i < length+3; i++){
+for(i = 0; i < length+4; i++){
 	
 	fputc(key_string[i], stdout);
 	
