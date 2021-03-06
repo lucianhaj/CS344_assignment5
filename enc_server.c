@@ -44,19 +44,20 @@ int main(int argc, char *argv[]){
 	char charValue[1];
 	
 	
-  int connectionSocket, charsRead, Read_all, message_length, key_length, actual_pid;
+  int connectionSocket, charsRead, charsWritten, Read_all, message_length, key_length, actual_pid;
   charsRead = 0;
+  charsWritten = 0;
   key_length = -1;
-  char buffer[140000];
+  char buffer[140000] = {0};
   char buffer1[70000];
   char buffer2[70000];
   char * length = NULL;
   struct sockaddr_in serverAddress, clientAddress;
   socklen_t sizeOfClientInfo = sizeof(clientAddress);
-	for(int i = 0; i < 130000; i++){
-		buffer[i] = 'z';
+	/* for(int i = 0; i < 130000; i++){
+		buffer[i] = 0;
 		
-	}
+	} */
   // Check usage & args
   if (argc < 2) { 
     fprintf(stderr,"USAGE: %s port\n", argv[0]); 
@@ -182,34 +183,39 @@ int main(int argc, char *argv[]){
 				/* char * key_string_ptr = strstr(&buffer, '/n');
 				printf("what is key_string_ptr %s", key_string_ptr);  */
 				//
-		/* 
 				
-				ciphertext = malloc((message_length + 1) * sizeof(char));
+				printf("what is key_string[12345] : %c", key_string[2]);
+
+				char * ciphertext = malloc((msg_length ) * sizeof(char));
 
 				
-				 ciphertext[0] = '@';
-				 for(int i = 1; i < message_length+1; i++){
+				// ciphertext[0] = '@';
+				 for(int i = 0; i < key_length-1; i++){
 
 				 int int_msg_char, int_key_char, int_cipher_char;
 				 int_msg_char = 0;
 				 int_key_char = 0;
 				 int_cipher_char= 0;
-				
+				if(key_string[i] == 0){
+				break; 	
+				}
+				else if(message[i] == 0){
+				break;
+				}
 				 
-				if(buffer[i] == ' '){
+				if(message[i] == ' '){
 					int_msg_char = 26;
 				}
 				else{
-					int_msg_char = (int)buffer[i] - 65;
-					
+					int_msg_char = (int)message[i] - 65;
 					
 				}
-				if(buffer2[i] == ' '){
+				if(key_string[i] == ' '){
 					int_key_char = 26;
 					
 				} 
 				else{
-				 int_key_char = (int)buffer2[i] -65;
+				 int_key_char = (int)key_string[i] -65;
 
 					
 				}
@@ -226,14 +232,22 @@ int main(int argc, char *argv[]){
 				else{
 				ciphertext[i] = (char)(int_cipher_char+65);
 				}
+				//printf("what is the ciphertext %c", ciphertext[i]);
 				} 
-				 */
+				 printf("what is the ciphertext %s", ciphertext);
 				
 				
+				ciphertext[key_length-1] = '%';
+				printf("what is the last ciphertext character:%c", ciphertext[key_length-1]);
+
 				
 				
+				 do{
+				charsWritten = send(connectionSocket, ciphertext, key_length, 0);
+				printf("how many characters written: %d", charsWritten);
 				
 				
+				}while(charsWritten < key_length); 
 						
 				
 				close(connectionSocket); 

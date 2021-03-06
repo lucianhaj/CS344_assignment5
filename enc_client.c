@@ -55,7 +55,9 @@ int main(int argc, char *argv[]) {
   struct sockaddr_in serverAddress;
   char buffer[70000];
   char buffer2[70000];
+  char buffer3[140000];
   num = 0;
+  charsRead = 0;
 
 	// code to parse input
   size_t size = 1000;
@@ -107,23 +109,56 @@ int main(int argc, char *argv[]) {
 
 	strcat(data, buffer);
 	strcat(data, buffer2);
+	fclose(plain);
+	fclose(key);
 	//data = strcat(message, key);
+	
+	 /********************************
+		Send message
+ ********************************/
+ 
+ 
+ 
 	 printf("what is the data %s\n", data);
 	printf("what is the length of data %d:\n", strlen(data)); 
 
 
-	// do{
+	 do{
 	charsWritten = send(socketFD, data, strlen(data), 0);
 	printf("how many characters written: %d", charsWritten);
 	
 	
-	//}while(charsWritten < strlen(data)); 
+	}while(charsWritten < strlen(data)); 
  
  int message_length, key_length;
+			
+			
+			
+			
+			while(1){
+
+				charsRead = recv(socketFD, buffer3, 139999, 0);  /*<______RECEIVING____!!!!!!!!!!_*/
+				 if(buffer3[charsRead-1] == '%'){
+				/* for(int i = 0; i < charsRead; i++){
+					if(buffer[i] == '%'){
+						printf("what is i %d:", i);
+					Read_all = 1;
+					break;
+				} */
+				 break;
+				} 
+				/* if(Read_all == 1){
+					break;
+				} */
+				}
+			buffer3[charsRead -1] = '\n';
+			printf("%s", buffer3);
  
- /********************************
-		Send message
- ********************************/
+ 
+ 
+ 
+ 
+ 
  
  
 
