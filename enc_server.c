@@ -133,7 +133,9 @@ int main(int argc, char *argv[]){
 					break;
 				} */
 				}  
+				char * key_string = NULL;//= malloc(70000* sizeof(char));
 
+				char * message = malloc(70000* sizeof(char));
 				char * payloadptr = &buffer;
 				int msg_length = 0;
 				int key_length = 0;
@@ -148,15 +150,38 @@ int main(int argc, char *argv[]){
 					}
 				}
 				key_length = charsRead - msg_length - 1;
-				
+				msg_length = charsRead - key_length -1;
 				
 				printf("How long is the message: %d", msg_length);
 				printf("How long is the message: %d", key_length);
 
 				
 				printf("what is read_all %d", Read_all);  
+				printf("what is the calculated message length %d", charsRead - key_length - 1 );
+				
+				strncpy(message, buffer, charsRead - key_length); 
+				 
+				//strncat(buffer, message, charsRead - key_length -1);
+				printf("what is the copied string %s", message);
+				printf("something");
+			    // key_string = strstr(buffer, '\n');
+				// printf("what is %s", key_string);
+			 	
 				
 				
+				//for(int i = msg_length + 1; i < charsRead; i++){
+					//printf("what is the character at %d:  %c", i, buffer[i]);
+					key_string = &buffer[msg_length];
+					
+					
+					
+					
+				//}
+				printf("what is the copied string %s", key_string); 
+
+				/* char * key_string_ptr = strstr(&buffer, '/n');
+				printf("what is key_string_ptr %s", key_string_ptr);  */
+				//
 		/* 
 				
 				ciphertext = malloc((message_length + 1) * sizeof(char));
