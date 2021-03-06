@@ -49,10 +49,10 @@ for(i = 0; i < length; i++){
 	//printf("random int: %d \n", random_int);
 	key_string[i] = alphabet_string[random_int]; 
 }
-key_string[i] = '%';
+key_string[i] = '\n';
 
 
-for(i = 0; i < length+4; i++){
+for(i = 0; i < length+1; i++){
 	
 	fputc(key_string[i], stdout);
 	
