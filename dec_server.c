@@ -44,13 +44,20 @@ int main(int argc, char *argv[]){
 	char charValue[1];
 	
 	
-  int connectionSocket, charsRead, Read_all, message_length, key_length, actual_pid;
-  char buffer[65000];
-  char buffer2[65000];
+  int connectionSocket, charsRead, charsWritten, Read_all, message_length, key_length, actual_pid;
+  charsRead = 0;
+  charsWritten = 0;
+  key_length = -1;
+  char buffer[140000] = {0};
+  char buffer1[70000];
+  char buffer2[70000];
   char * length = NULL;
   struct sockaddr_in serverAddress, clientAddress;
   socklen_t sizeOfClientInfo = sizeof(clientAddress);
-
+	/* for(int i = 0; i < 130000; i++){
+		buffer[i] = 0;
+		
+	} */
   // Check usage & args
   if (argc < 2) { 
     fprintf(stderr,"USAGE: %s port\n", argv[0]); 
@@ -108,123 +115,107 @@ int main(int argc, char *argv[]){
 	/***************************************************************		
 	Receive the message in the first transmission and respond with sucess 
 	***************************************************************/		
-				
-				memset(buffer, '\0', 65000);
-				charsRead = recv(connectionSocket, buffer, 64999, 0); 
-				
-				 //Check that we received all the data
-				 for(int i = 0; i < strlen(buffer); i++){
-						 if(buffer[i] == '@'){
-						 Read_all = 1;
-						 break;
-						 }
-				 }
-						 
-	
-
-				printf("%d", Read_all);
-				 while(Read_all == 0){
-					 
-				memset(buffer, '\0', 65000);
-				charsRead = recv(connectionSocket, buffer, 64999, 0); 
-				
-				for(int i = 0; i < strlen(buffer); i++){
-						 if(buffer[i] == '@'){
-						 Read_all = 1;
-						 break;
-						 }
-				 }
-				}
-				
-				 
-				if (charsRead < 0){
-				  error("ERROR reading from socket");
-				}
-				message_length = strlen(buffer)-1;
-				
-				
-				printf("SERVER: The PLAINTEXT from client \"%s\"\n", buffer);
-
-				//Send a success message back to the client
-				charsRead = send(connectionSocket, 
-								"I am the server, and I got your message", 39, 0); 
-				if (charsRead < 0){
-				  error("ERROR writing to socket");
-				} 
-				
 				Read_all = 0;
-	/*************************************************************		
-	Receive the key in the second transmisson and respond with success
-	*************************************************************/
+				//printf("what is the buffer initially %s", buffer);
 				
-				memset(buffer2, '\0', 65000);
-				charsRead = recv(connectionSocket, buffer2, 64999, 0);  
-				
-				key_length = strlen(buffer2) - 1;
+				 while(1){
 
-				
-				//while(charsRead < message_length
-				//Check that we received all the data
-				
-			/* 	printf("what is the key %s", buffer2);
-				 for(int i = 0; i < strlen(buffer2); i++){
-						 if(buffer2[i] == '@'){
-						 Read_all = 1;
-						 break;
-						 }
-				}
-				printf("what was read_all %d *****************\n", Read_all);
-				while(Read_all == 0){
-					 
-				memset(buffer2, '\0', 65000);
-				charsRead = recv(connectionSocket, buffer2, 64999, 0);
-
-				 for(int i = 0; i < strlen(buffer2); i++){
-						 if(buffer2[i] == '@'){
-						 Read_all = 1;
-						 break;
-						 }
-				}				
-				}
-				printf("what was read_all %d *****************\n", Read_all);
-
-				key_length = strlen(buffer2) - 1;
-				if(key_length < message_length){
-				error("Your message is longer than your key!");
-				exit(1);	
-					
+				charsRead = recv(connectionSocket, buffer, 139999, 0);  /*<______RECEIVING____!!!!!!!!!!_*/
+			 	if(buffer[charsRead-1] == '%'){
+				/* for(int i = 0; i < charsRead; i++){
+					if(buffer[i] == '%'){
+						printf("what is i %d:", i);
+					Read_all = 1;
+					break;
 				} */
+				break;
+				}
+				/* if(Read_all == 1){
+					break;
+				} */
+				}  
+				char * key_string = NULL;//= malloc(70000* sizeof(char));
+
+				char * message = malloc(70000* sizeof(char));
+				char * payloadptr = &buffer;
+				int msg_length = 0;
+				int key_length = 0;
+				for(int i = 0; i < charsRead; i++){
+					if(buffer[i] == '\n'){
+					msg_length++;
+					break; 
+					
+					}
+					else{
+						msg_length++;
+					}
+				}
+				key_length = charsRead - msg_length - 1;
+				msg_length = charsRead - key_length -1;
 				
-				
-				/********************************************
-				Encrypt the input plaintext using the key 
-				********************************************/
-				
-				ciphertext = malloc((message_length + 1) * sizeof(char));
+				//printf("How long is the message: %d", msg_length);
+				//printf("How long is the message: %d", key_length);
 
 				
-				 ciphertext[0] = '@';
-				 for(int i = 1; i < message_length+1; i++){
+				//printf("what is read_all %d", Read_all);  
+				//printf("what is the calculated message length %d", charsRead - key_length - 1 );
+				
+				strncpy(message, buffer, charsRead - key_length); 
+				 
+				//strncat(buffer, message, charsRead - key_length -1);
+				//printf("what is the copied string %s", message);
+				//printf("something");
+			    // key_string = strstr(buffer, '\n');
+				 //printf("what is %s", key_string);
+			 	
+				
+				
+				//for(int i = msg_length + 1; i < charsRead; i++){
+					//printf("what is the character at %d:  %c", i, buffer[i]);
+					key_string = &buffer[msg_length];
+					
+					
+					
+					
+				//}
+				//printf("what is the copied string %s", key_string); 
+
+				/* char * key_string_ptr = strstr(&buffer, '/n');
+				printf("what is key_string_ptr %s", key_string_ptr);  */
+				//
+				
+				//printf("what is key_string[12345] : %c", key_string[2]);
+
+				char * ciphertext = malloc((msg_length ) * sizeof(char));
+
+				
+				// ciphertext[0] = '@';
+				 for(int i = 0; i < msg_length-1; i++){
 
 				 int int_msg_char, int_key_char, int_cipher_char;
 				 int_msg_char = 0;
 				 int_key_char = 0;
 				 int_cipher_char= 0;
-				
+				if(key_string[i] == 0){
+				break; 	
+				}
+				else if(message[i] == 0){
+				break;
+				}
 				 
-				if(buffer[i] == ' '){
+				if(message[i] == ' '){
 					int_msg_char = 26;
 				}
 				else{
-					int_msg_char = (int)buffer[i] - 65;
+					int_msg_char = (int)message[i] - 65;
 					
 				}
-				if(buffer2[i] == ' '){
+				if(key_string[i] == ' '){
 					int_key_char = 26;
 					
 				} 
 				else{
-				 int_key_char = (int)buffer2[i] -65;
+				 int_key_char = (int)key_string[i] -65;
 
 					
 				}
@@ -241,50 +232,22 @@ int main(int argc, char *argv[]){
 				else{
 				ciphertext[i] = (char)(int_cipher_char+65);
 				}
+				//printf("what is the ciphertext %c", ciphertext[i]);
 				} 
+				// printf("what is the ciphertext %s", ciphertext);
 				
 				
-				 
-				if (charsRead < 0){
-				  error("ERROR reading from socket");
-				}
-				printf("key_length %d \n", key_length);
-				printf("message_length %d \n", message_length); 
+				ciphertext[msg_length-1] = '%';
+				//printf("what is the last ciphertext character:%c", ciphertext[key_length-1]);
 
-			
-			
-				
-				charsRead = send(connectionSocket, ciphertext, strlen(ciphertext)+1, 0);
-			
-				if (charsRead < 0){
-				  error("ERROR writing to socket");
-				}
-				/* while(charsRead < message_length){
-					
-				charsRead = send(connectionSocket, ciphertext, strlen(ciphertext)+1, 0);
-	
-					
-				} */
-			
-			
-		 
-				//printf("SERVER: The KEY from client:       \"%s\"\n", buffer2);
-				
-			
-				// Send a success message back to the client
-				charsRead = send(connectionSocket, 
-								"I am the server, and I got your message", 39, 0); 
-				if (charsRead < 0){
-				  error("ERROR writing to socket");
-				}
 				
 				
+				// do{
+				charsWritten = send(connectionSocket, ciphertext, key_length, 0);
+				//printf("how many characters written: %d", charsWritten);
 				
 				
-				
-				
-				
-				
+				//}while(charsWritten < key_length); 
 						
 				
 				close(connectionSocket); 

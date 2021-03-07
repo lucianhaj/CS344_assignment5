@@ -119,13 +119,13 @@ int main(int argc, char *argv[]) {
  
  
  
-	 printf("what is the data %s\n", data);
-	printf("what is the length of data %d:\n", strlen(data)); 
+	// printf("what is the data %s\n", data);
+	//printf("what is the length of message %d:\n", strlen(buffer)); 
 
 
 	 do{
 	charsWritten = send(socketFD, data, strlen(data), 0);
-	printf("how many characters written: %d", charsWritten);
+	//printf("how many characters written: %d", charsWritten);
 	
 	
 	}while(charsWritten < strlen(data)); 
@@ -137,21 +137,24 @@ int main(int argc, char *argv[]) {
 			
 			while(1){
 
-				charsRead = recv(socketFD, buffer3, 139999, 0);  /*<______RECEIVING____!!!!!!!!!!_*/
-				 if(buffer3[charsRead-1] == '%'){
-				/* for(int i = 0; i < charsRead; i++){
-					if(buffer[i] == '%'){
-						printf("what is i %d:", i);
-					Read_all = 1;
-					break;
-				} */
+				charsRead = recv(socketFD, buffer3, strlen(buffer), 0);  /*<______RECEIVING____!!!!!!!!!!_*/
+				 if(buffer3[strlen(buffer)-1] == '%'){
+				
 				 break;
-				} 
+				}  
 				/* if(Read_all == 1){
 					break;
 				} */
-				}
-			buffer3[charsRead -1] = '\n';
+				//}
+				 /* for(int i = 0; i < charsRead+1; i++){
+					if(buffer3[i] == '0'){
+					buffer3[i] = '\n';
+					break;
+					} */
+				} 				
+				//printf("what is buffer3 %c", buffer3[charsRead-1]);
+			buffer3[charsRead-1] = '\n';
+			//buffer3[charsRead-1] = '\n';
 			printf("%s", buffer3);
  
  

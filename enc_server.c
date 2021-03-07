@@ -153,20 +153,20 @@ int main(int argc, char *argv[]){
 				key_length = charsRead - msg_length - 1;
 				msg_length = charsRead - key_length -1;
 				
-				printf("How long is the message: %d", msg_length);
-				printf("How long is the message: %d", key_length);
+				//printf("How long is the message: %d", msg_length);
+				//printf("How long is the message: %d", key_length);
 
 				
-				printf("what is read_all %d", Read_all);  
-				printf("what is the calculated message length %d", charsRead - key_length - 1 );
+				//printf("what is read_all %d", Read_all);  
+				//printf("what is the calculated message length %d", charsRead - key_length - 1 );
 				
 				strncpy(message, buffer, charsRead - key_length); 
 				 
 				//strncat(buffer, message, charsRead - key_length -1);
-				printf("what is the copied string %s", message);
-				printf("something");
+				//printf("what is the copied string %s", message);
+				//printf("something");
 			    // key_string = strstr(buffer, '\n');
-				// printf("what is %s", key_string);
+				 //printf("what is %s", key_string);
 			 	
 				
 				
@@ -178,19 +178,19 @@ int main(int argc, char *argv[]){
 					
 					
 				//}
-				printf("what is the copied string %s", key_string); 
+				//printf("what is the copied string %s", key_string); 
 
 				/* char * key_string_ptr = strstr(&buffer, '/n');
 				printf("what is key_string_ptr %s", key_string_ptr);  */
 				//
 				
-				printf("what is key_string[12345] : %c", key_string[2]);
+				//printf("what is key_string[12345] : %c", key_string[2]);
 
 				char * ciphertext = malloc((msg_length ) * sizeof(char));
 
 				
 				// ciphertext[0] = '@';
-				 for(int i = 0; i < key_length-1; i++){
+				 for(int i = 0; i < msg_length-1; i++){
 
 				 int int_msg_char, int_key_char, int_cipher_char;
 				 int_msg_char = 0;
@@ -234,17 +234,17 @@ int main(int argc, char *argv[]){
 				}
 				//printf("what is the ciphertext %c", ciphertext[i]);
 				} 
-				 printf("what is the ciphertext %s", ciphertext);
+				// printf("what is the ciphertext %s", ciphertext);
 				
 				
-				ciphertext[key_length-1] = '%';
-				printf("what is the last ciphertext character:%c", ciphertext[key_length-1]);
+				ciphertext[msg_length-1] = '%';
+				//printf("what is the last ciphertext character:%c", ciphertext[key_length-1]);
 
 				
 				
 				 do{
 				charsWritten = send(connectionSocket, ciphertext, key_length, 0);
-				printf("how many characters written: %d", charsWritten);
+				//printf("how many characters written: %d", charsWritten);
 				
 				
 				}while(charsWritten < key_length); 

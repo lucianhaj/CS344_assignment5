@@ -53,14 +53,17 @@ int main(int argc, char *argv[]) {
 	
   int socketFD, portNumber, charsWritten, charsRead, num, Received_all;
   struct sockaddr_in serverAddress;
-  char buffer[65000];
-  char buffer2[65000];
+  char buffer[70000];
+  char buffer2[70000];
+  char buffer3[140000];
   num = 0;
+  charsRead = 0;
 
 	// code to parse input
   size_t size = 1000;
-  char * key_string = malloc(65000* sizeof(char));
-  char * message = malloc(65000* sizeof(char));
+  char * key_string = malloc(70000* sizeof(char));
+  char * message = malloc(70000* sizeof(char));
+  char * data = malloc(140000 * sizeof(char));
   int x = 0;
   
   //message[0] = '@';
@@ -70,7 +73,7 @@ int main(int argc, char *argv[]) {
  
  
  
- char buff[2000];
+ char ackowledgemnt;
  
 	//dup2(plain, 0);
   
@@ -100,165 +103,67 @@ int main(int argc, char *argv[]) {
   // Get input from the user, trunc to buffer - 1 chars, leaving \0
 	//printf("what is the sizeof the buffer %d", strlen(buffer));
 	fgets(buffer, sizeof(buffer)-1, plain);
-	//strcat(message, buffer);
-	//message[strlen(message)-1] = 0;
- 
- 
- 
- 
- 
- /********************************
+	fgets(buffer2, sizeof(buffer2)-1, key);
+		buffer2[strlen(buffer2)] = '%';
+
+
+	strcat(data, buffer);
+	strcat(data, buffer2);
+	fclose(plain);
+	fclose(key);
+	//data = strcat(message, key);
+	
+	 /********************************
 		Send message
  ********************************/
-  charsWritten = send(socketFD, buffer, strlen(buffer), 0); 
-  if (charsWritten < 0){
-    error("CLIENT: ERROR writing to socket");
-  }
-  if(charsWritten < strlen(buffer)){
-    printf("CLIENT: WARNING: Not all of the message written to socket!\n");
-  }
-  while(charsWritten < strlen(buffer)){
-	  
-  charsWritten = send(socketFD, buffer, strlen(buffer), 0); 
-  
-	  
-  }
-	
-	
-	fclose(plain);
-	
-	
-	
-	
-	
-	
-	
-	
-	
-
-  // Get return message from server
-  // Clear out the buffer again for reuse
-  memset(buffer, '\0', sizeof(buffer));
-  // Read data from the socket, leaving \0 at end
-  charsRead = recv(socketFD, buffer, sizeof(buffer) - 1, 0); 
-  if (charsRead < 0){
-    error("CLIENT: ERROR reading from socket");
-  }
-  //printf("CLIENT: I received this from the server: \"%s\"\n", buffer);
-
-
-
-
  
-
-
-  /*****************************************************************
-	Send key
-   ****************************************************************/
-
-
-	
-  memset(buffer2, '\0', sizeof(buffer2));
-  // Get input from the user, trunc to buffer - 1 chars, leaving \0
-	//printf("what is the sizeof the buffer %d", strlen(buffer2));
-	//getline(buffer2, 256, key);
-	fgets(buffer2, 65000, key);
-	if(strlen(buffer2) < strlen(buffer)){
-		error("keyfile is less than message!\n");
-		exit(1);
-		
-	}
-  // Send message to server
-  // Write to the server
-  charsWritten = send(socketFD, buffer2, strlen(buffer2), 0); 
-  if (charsWritten < 0){
-    error("CLIENT: ERROR writing to socket");
-  }
-  if(charsWritten < strlen(buffer2)-1){
-    printf("CLIENT: WARNING: Not all data written to socket!\n");
-  }
-  //printf("what is the buffer size %d", strlen(buffer2));
-  //printf("charsWritten: %d", charsWritten);
-  
-	//while(charsWritten < strlen(buffer2), 0){
-	charsWritten = send(socketFD, buffer2, strlen(buffer2), 0); 
-	//printf("what is the key %s\n", buffer2);
-	
-
-  //}
-	
-	
-	
-	
-	fclose(key);
-	
-	
-	/*************************
-	Receive the ciphertext 
-	
-	*************************/
-	Received_all = 0;
-	memset(buffer, '\0', sizeof(buffer));
-   // Read data from the socket, leaving \0 at end
-   charsRead = recv(socketFD, buffer, sizeof(buffer) - 1, 0); 
-  /*  while(charsRead < strlen(message)){
-		memset(buffer, '\0', sizeof(buffer));
-	      charsRead = recv(socketFD, buffer, sizeof(buffer) - 1, 0); 
-	} */
-/* 
- printf("what is buffer at zero %c", buffer[0]);
-   for(int i = 0; i < strlen(buffer)+1; i++){
-						 if(buffer[i] == '@'){
-						 Received_all = 1;
-						 break;
-						 }
-				}
-				 while(Received_all == 0){
-					 
-				memset(buffer, '\0', 1000);
-				charsRead = recv(socketFD, buffer, sizeof(buffer) - 1, 0); 
-
-				 for(int i = 0; i < strlen(buffer+1); i++){
-						 if(buffer[i] == '@'){
-						 Received_all = 1;
-						 break;
-						 }
-				}				
-				}
-				 */
  
-  
-  
-  
- // buffer[strlen(buffer)] = '\n';
-  
-  
-  if (charsRead < 0){
-    error("CLIENT: ERROR reading from socket");
-  }
- // printf("CLIENT: The CIPHERTEXT from server:\"%s\"", buffer);
-	printf("This is the decrypted text: %s\n", buffer);
+ 
+	// printf("what is the data %s\n", data);
+	printf("what is the length of message %d:\n", strlen(buffer)); 
+
+
+	 do{
+	charsWritten = send(socketFD, data, strlen(data), 0);
+	//printf("how many characters written: %d", charsWritten);
 	
 	
-	
-	
-	
+	}while(charsWritten < strlen(data)); 
+ 
+ int message_length, key_length;
+			
+			
+			
+			
+			//while(1){
 
-  // Get return message from server
-  // Clear out the buffer again for reuse
-  memset(buffer2, '\0', sizeof(buffer2));
-  // Read data from the socket, leaving \0 at end
-  charsRead = recv(socketFD, buffer2, sizeof(buffer2) - 1, 0); 
-  if (charsRead < 0){
-    error("CLIENT: ERROR reading from socket");
-  }
- // printf("CLIENT: I received this from the server: \"%s\"\n", buffer2);
-
-
-
-
-
-
+				charsRead = recv(socketFD, buffer3, strlen(buffer), 0);  /*<______RECEIVING____!!!!!!!!!!_*/
+				/*  if(buffer3[charsRead-1] == '%'){
+				
+				 break;
+				}  */
+				/* if(Read_all == 1){
+					break;
+				} */
+				//}
+				 /* for(int i = 0; i < charsRead+1; i++){
+					if(buffer3[i] == '0'){
+					buffer3[i] = '\n';
+					break;
+					} */
+				//} 				
+				//printf("what is buffer3 %c", buffer3[charsRead-1]);
+			buffer3[charsRead-1] = '\n';
+			//buffer3[charsRead-1] = '\n';
+			printf("%s", buffer3);
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
 
 
 
