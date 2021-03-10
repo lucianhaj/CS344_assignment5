@@ -1,3 +1,4 @@
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -138,15 +139,25 @@ int main(int argc, char *argv[]) {
 	/********************************
 	Send challenge and receive response
 	**********************************/
-	/* charsWritten1 = send(socketFD, "hello", 5, 0);
+
 	
-	
+	//while(1){
+		/* send(socketFD, "hello", 5, 0);
+		printf("awaiting server");          */                             
+	while(1){
 	charsRead1 = recv(socketFD, recv_str, 5, 0);
+	 if(strlen(recv_str) > 0){
+		break;
+	}
+	}
 	if(strcmp(recv_str, "world") != 0){
 	fprintf(stderr, "Could not connect to port: %d", portNumber);
 	exit(2);
-	} */
-	
+	}
+	else{
+			 send(socketFD, "hello", 5, 0);
+
+	}
 		 /********************************
 		Send message
  ********************************/
@@ -201,3 +212,4 @@ int main(int argc, char *argv[]) {
   close(socketFD); 
   exit(0);
 }
+
