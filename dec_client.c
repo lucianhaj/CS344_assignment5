@@ -112,6 +112,32 @@ int main(int argc, char *argv[]) {
 	strcat(data, buffer2);
 	fclose(plain);
 	fclose(key);
+	/******************************************
+	Check for message length being longer tha key.
+	******************************************/
+		if(strlen(buffer2) < strlen(buffer)){
+		fprintf(stderr,"keylength is shorter than the message\n");
+		exit(1);
+		
+ 
+	}
+
+	/*******************************
+	Check for valid characters
+	********************************/
+	for(int i = 0; i< strlen(buffer)-1; i++){
+			if((int)buffer[i] < 65 || (int)buffer[i] > 90){
+				if((int)buffer[i] != 32){
+				fprintf(stderr,"input contains bad characters \n");
+				exit(1);
+				}
+			}
+			
+			
+		}
+	
+	
+	
 	
 	 /********************************
 		Send message
