@@ -117,22 +117,26 @@ int main(int argc, char *argv[]){
 	***************************************************************/		
 				Read_all = 0;
 				//printf("what is the buffer initially %s", buffer);
-				
+				int index = 0;
 				 while(1){
 
-				charsRead = recv(connectionSocket, buffer, 139999, 0);  /*<______RECEIVING____!!!!!!!!!!_*/
-			 	if(buffer[charsRead-1] == '%'){
-				/* for(int i = 0; i < charsRead; i++){
+				charsRead = recv(connectionSocket, &buffer[index], 139999, 0);  /*<______RECEIVING____!!!!!!!!!!_*/
+			 	//printf("DS: many characters Read: %d", charsRead);
+
+				
+				//if(buffer[charsRead-1] == '%'){
+				 for(int i = 0; i < 139999; i++){
 					if(buffer[i] == '%'){
-						printf("what is i %d:", i);
+						//printf("what is i %d:", i);
 					Read_all = 1;
 					break;
-				} */
-				break;
+				} 
+				//break;
 				}
-				/* if(Read_all == 1){
+				 if(Read_all == 1){
 					break;
-				} */
+				} 
+				index += charsRead;
 				}  
 				char * key_string = NULL;//= malloc(70000* sizeof(char));
 
