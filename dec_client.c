@@ -51,14 +51,15 @@ void setupAddressStruct(struct sockaddr_in* address,
 
 int main(int argc, char *argv[]) {
 	
-  int socketFD, portNumber, charsWritten, charsRead, num, Received_all;
+  int socketFD, portNumber, charsWritten, charsWritten1, charsRead, num, Received_all;
   struct sockaddr_in serverAddress;
   char buffer[70000];
   char buffer2[70000];
   char buffer3[140000];
   num = 0;
   charsRead = 0;
-
+  charsWritten1 = -1;
+	char recv_str[5] = {0};
 	// code to parse input
   size_t size = 1000;
   char * key_string = malloc(70000* sizeof(char));
@@ -111,21 +112,30 @@ int main(int argc, char *argv[]) {
 	strcat(data, buffer2);
 	fclose(plain);
 	fclose(key);
-	//data = strcat(message, key);
 	
 	 /********************************
 		Send message
  ********************************/
  
- 
- 
-	// printf("what is the data %s\n", data);
-	//printf("what is the length of message %d:\n", strlen(buffer)); 
+                                  
+	 while(1){
+	recv(socketFD, recv_str, 5, 0);
+	 if(strlen(recv_str) > 0){
+		break;
+	}
+	}
+	if(strcmp(recv_str, "Decry") != 0){
+	fprintf(stderr, "Could not connect to port: %d", portNumber);
+	exit(2);
+	}
+		else{
+			send(socketFD, "Pass!", 5, 0);
+		}
+
 
 
 	 do{
 	charsWritten = send(socketFD, data, strlen(data), 0);
-	//printf("DC: how many characters written: %d", charsWritten);
 	
 	
 	}while(charsWritten < strlen(data)); 
@@ -134,27 +144,26 @@ int main(int argc, char *argv[]) {
 			
 			
 			
-			
-			//while(1){
+			int Read_all = 0;
+			int index = 0;
+				 while(1){
 
-				charsRead = recv(socketFD, buffer3, strlen(buffer), 0);  /*<______RECEIVING____!!!!!!!!!!_*/
-				/*  if(buffer3[charsRead-1] == '%'){
+				charsRead = recv(socketFD, &buffer3[index], 139999, 0);  /*<______RECEIVING____!!!!!!!!!!_*/
+
 				
-				 break;
-				}  */
-				/* if(Read_all == 1){
+				 for(int i = 0; i < 139999; i++){
+					if(buffer3[i] == '%'){
+						buffer3[i] = '\n';
+					Read_all = 1;
 					break;
-				} */
-				//}
-				 /* for(int i = 0; i < charsRead+1; i++){
-					if(buffer3[i] == '0'){
-					buffer3[i] = '\n';
+				} 
+				//break;
+				}
+				 if(Read_all == 1){
 					break;
-					} */
-				//} 				
-				//printf("what is buffer3 %c", buffer3[charsRead-1]);
-			buffer3[charsRead-1] = '\n';
-			//buffer3[charsRead-1] = '\n';
+				} 
+				index += charsRead;
+				}  			
 			printf("%s", buffer3);
  
  
