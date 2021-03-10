@@ -120,12 +120,12 @@ int main(int argc, char *argv[]) {
  
  
 	// printf("what is the data %s\n", data);
-	printf("what is the length of message %d:\n", strlen(buffer)); 
+	//printf("what is the length of message %d:\n", strlen(buffer)); 
 
 
 	 do{
 	charsWritten = send(socketFD, data, strlen(data), 0);
-	//printf("how many characters written: %d", charsWritten);
+	//printf("DC: how many characters written: %d", charsWritten);
 	
 	
 	}while(charsWritten < strlen(data)); 
