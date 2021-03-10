@@ -1,4 +1,5 @@
 
+
 #include <fcntl.h>
 
 #include <stdio.h>
@@ -98,16 +99,16 @@ int main(int argc, char *argv[]){
     if (connectionSocket < 0){
       error("ERROR on accept");
     }
-	
-	//charsRead1 = recv(connectionSocket, recv_str, 5, 0);
+		send(connectionSocket, "world", 5, 0);
+		//sleep(1);
+	 charsRead1 = recv(connectionSocket, recv_str, 5, 0);
 				
-	/* if(strcmp(recv_str, "hello") != 0){
-					fprintf(stderr,"SERVER: someone trying to connect who is not enc_client");
-				}		 */		
+	 if(strcmp(recv_str, "hello") != 0){
+		charsWritten1 = send(connectionSocket, "false", 5, 0);
+	 }
 	else{
-		//charsWritten1 = send(connectionSocket, "world", 5, 0);
 
-		   pid_t spawnPid = fork();
+		  pid_t spawnPid = fork();
 		
 	  switch(spawnPid){
 		case -1:
@@ -242,9 +243,9 @@ int main(int argc, char *argv[]){
 				}
 			//	printf("msg char is: %d", int_msg_char);
 			//	printf("key char is %d", int_key_char);
-				int_cipher_char = int_msg_char - int_key_char;
-				if(int_cipher_char < 0){
-					int_cipher_char += 27;
+				int_cipher_char = int_msg_char + int_key_char;
+				if(int_cipher_char > 26){
+					int_cipher_char -= 27;
 					
 				} 
 				if(int_cipher_char == 26){
@@ -286,6 +287,12 @@ int main(int argc, char *argv[]){
 					}
 			
 		}
+		/* else{
+	charsWritten1 = send(connectionSocket, "false", 5, 0);
+	
+			
+			
+		} */
 	
 	}
 
@@ -293,3 +300,5 @@ int main(int argc, char *argv[]){
 			  close(listenSocket); 
 		return 0;
 }
+
+
