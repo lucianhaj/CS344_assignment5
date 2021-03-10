@@ -42,11 +42,13 @@ int main(int argc, char *argv[]){
 	char * msg = NULL;
 	char * key_string = NULL;
 	char charValue[1];
+	char recv_str[5] = {0};
 	
 	
-  int connectionSocket, charsRead, charsWritten, Read_all, message_length, key_length, actual_pid;
+  int connectionSocket, charsRead, charsWritten, charsWritten1, Read_all, message_length, key_length, actual_pid;
   charsRead = 0;
   charsWritten = 0;
+  charsWritten1 = -1;
   key_length = -1;
   char buffer[140000] = {0};
   char buffer1[70000];
@@ -92,7 +94,15 @@ int main(int argc, char *argv[]){
                 &sizeOfClientInfo); 
     if (connectionSocket < 0){
       error("ERROR on accept");
-    }
+    } 
+		 send(connectionSocket, "Decry", 5, 0);
+		//sleep(1);
+		printf("awaiting client"); 
+	 recv(connectionSocket, recv_str, 5, 0);
+				
+	 if(strcmp(recv_str, "Pass!") != 0){
+		fprintf(stderr, "did not receive the correct string from client", 0);
+	 } 
 	else{
 		
 		   pid_t spawnPid = fork();
@@ -113,7 +123,7 @@ int main(int argc, char *argv[]){
 
 				// Read the client's message from the socket
 	/***************************************************************		
-	Receive the message in the first transmission and respond with sucess 
+	Loop until we receive the termination character in the buffer
 	***************************************************************/		
 				Read_all = 0;
 				//printf("what is the buffer initially %s", buffer);
