@@ -51,14 +51,17 @@ void setupAddressStruct(struct sockaddr_in* address,
 
 int main(int argc, char *argv[]) {
 	
-  int socketFD, portNumber, charsWritten, charsRead, num, Received_all;
+  int socketFD, portNumber, charsWritten, charsWritten1, charsRead, charsRead1, num, Received_all;
   struct sockaddr_in serverAddress;
   char buffer[70000];
   char buffer2[70000];
   char buffer3[140000];
   num = 0;
   charsRead = 0;
-
+  charsWritten1 = -1;
+  charsRead1 = -1;
+  
+  char recv_str[5] = {0};
 	// code to parse input
   size_t size = 1000;
   char * key_string = malloc(70000* sizeof(char));
@@ -66,16 +69,14 @@ int main(int argc, char *argv[]) {
   char * data = malloc(140000 * sizeof(char));
   int x = 0;
   
-  //message[0] = '@';
  
    FILE * plain = fopen(argv[1],  "r");
    FILE * key = fopen(argv[2],  "r"); 
  
  
- 
  char ackowledgemnt;
  
-	//dup2(plain, 0);
+
   
   // Check usage & args
   if (argc < 3) { 
@@ -111,21 +112,50 @@ int main(int argc, char *argv[]) {
 	strcat(data, buffer2);
 	fclose(plain);
 	fclose(key);
-	//data = strcat(message, key);
+
 	
-	 /********************************
+	//Make sure that the key is not shorter than the message
+	if(strlen(buffer2) < strlen(buffer)){
+		fprintf(stderr,"keylength is shorter than the message\n");
+		exit(1);
+		
+ 
+	}
+
+	/*******************************
+	Check for valid characters
+	********************************/
+	for(int i = 0; i< strlen(buffer)-1; i++){
+			if((int)buffer[i] < 65 || (int)buffer[i] > 90){
+				if((int)buffer[i] != 32){
+				fprintf(stderr,"input contains bad characters \n");
+				exit(1);
+				}
+			}
+			
+			
+		}
+	/********************************
+	Send challenge and receive response
+	**********************************/
+	/* charsWritten1 = send(socketFD, "hello", 5, 0);
+	
+	
+	charsRead1 = recv(socketFD, recv_str, 5, 0);
+	if(strcmp(recv_str, "world") != 0){
+	fprintf(stderr, "Could not connect to port: %d", portNumber);
+	exit(2);
+	} */
+	
+		 /********************************
 		Send message
  ********************************/
  
- 
- 
-	// printf("what is the data %s\n", data);
-	//printf("what is the length of message %d:\n", strlen(buffer)); 
-
-
+	
+	
 	 do{
 	charsWritten = send(socketFD, data, strlen(data), 0);
-	//printf("how many characters written: %d", charsWritten);
+	//printf("DC: how many characters written: %d", charsWritten);
 	
 	
 	}while(charsWritten < strlen(data)); 
@@ -135,13 +165,13 @@ int main(int argc, char *argv[]) {
 			
 			
 			
-			while(1){
+			//while(1){
 
 				charsRead = recv(socketFD, buffer3, strlen(buffer), 0);  /*<______RECEIVING____!!!!!!!!!!_*/
-				 if(buffer3[strlen(buffer)-1] == '%'){
+				/*  if(buffer3[charsRead-1] == '%'){
 				
 				 break;
-				}  
+				}  */
 				/* if(Read_all == 1){
 					break;
 				} */
@@ -151,7 +181,7 @@ int main(int argc, char *argv[]) {
 					buffer3[i] = '\n';
 					break;
 					} */
-				} 				
+				//} 				
 				//printf("what is buffer3 %c", buffer3[charsRead-1]);
 			buffer3[charsRead-1] = '\n';
 			//buffer3[charsRead-1] = '\n';
@@ -169,5 +199,5 @@ int main(int argc, char *argv[]) {
 
   // Close the socket
   close(socketFD); 
-  return 0;
+  exit(0);
 }
